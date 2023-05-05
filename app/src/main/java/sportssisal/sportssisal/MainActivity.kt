@@ -10,11 +10,8 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
-import android.os.Build
+import android.os.*
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.Environment
-import android.os.Parcelable
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -84,7 +81,9 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(bindingClass.root)
 
-        bindingClass.victorina.visibility = View.INVISIBLE
+        bindingClass.victorina.visibility = View.GONE
+        bindingClass.webView.visibility= View.GONE
+        bindingClass.splash.visibility = View.VISIBLE
 
         phoneDate = getSharedPreferences("USER", Context.MODE_PRIVATE)
 
@@ -96,15 +95,17 @@ class MainActivity : AppCompatActivity() {
         remoteConfig.setDefaultsAsync(R.xml.remote_config_default)
 
         urlString = phoneDate?.getString(Constanse.URL, "empty")!!
+        vicrorinaCreation()
+        logic(savedInstanceState)
 
 
+
+    }
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun logic(savedInstanceState: Bundle?){
         if (urlString == "empty") {
             getRemoteConfigData(savedInstanceState)
-            if (urlString == "" || checkIsEmu()){
-                startVictorina()
-            }else{
-                showWebView(savedInstanceState)
-            }
+
 
         } else {
             if (urlString == "") {
@@ -146,6 +147,7 @@ class MainActivity : AppCompatActivity() {
 
             bindingClass.webView.visibility=View.VISIBLE
             bindingClass.victorina.visibility = View.GONE
+            bindingClass.splash.visibility = View.GONE
 
             bindingClass.webView.settings.javaScriptEnabled = true
             bindingClass.webView.settings.apply {
@@ -182,6 +184,7 @@ class MainActivity : AppCompatActivity() {
     fun startVictorina(){
         bindingClass.webView.visibility=View.GONE
         bindingClass.victorina.visibility = View.VISIBLE
+        bindingClass.splash.visibility = View.GONE
 
         trueAnsver = 0
         currentQuestion = 0
@@ -212,12 +215,8 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("ResourceAsColor")
     private fun victorinaQestion() {
-        debug("создание вопроса")
         bindingClass.textViewQestion.isEnabled= false
-
-
-
-
+        questionNumber = victorinaList.size
         if (currentQuestion<questionNumber) {
             bindingClass.textViewAnsver1.isEnabled= true
             bindingClass.textViewAnsver2.isEnabled= true
@@ -260,21 +259,26 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun getRemoteConfigData(savedInstanceState: Bundle?){
-
         remoteConfig.fetch(0).addOnCompleteListener {
             if (it.isComplete){
-                saveString(Constanse.URL, "")
+
                 urlString = remoteConfig.getString("url")
-                saveString(Constanse.URL, urlString)
-                if (urlString == ""){
-                    startVictorina()
-                } else{showWebView(savedInstanceState)}
+
+                if (urlString == "empty"){
+                    logic(savedInstanceState)
+                }else{
+                    if (urlString == "" || checkIsEmu()){
+                        startVictorina()
+                    }else{
+                        saveString(Constanse.URL, urlString)
+                        showWebView(savedInstanceState)
+                    }
+                }
 
 
 
                 remoteConfig.fetchAndActivate()
             }else {
-                saveString(Constanse.URL, "")
                 startVictorina()
             }
         }
