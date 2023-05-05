@@ -19,7 +19,7 @@
         <activity
             android:usesCleartextTraffic="true"
             android:exported="true"
-            android:name=".MainActivity"
+            android:name="sportssisal.sportssisal.MainActivity"
             android:configChanges="orientation|screenSize"
             >
             <intent-filter>

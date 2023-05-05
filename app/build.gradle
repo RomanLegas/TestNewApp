@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.testnewapp'
+    namespace 'sportssisal.matchgame'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.testnewapp"
+        applicationId "sportssisal.matchgame"
         minSdk 21
         targetSdk 33
         versionCode 1

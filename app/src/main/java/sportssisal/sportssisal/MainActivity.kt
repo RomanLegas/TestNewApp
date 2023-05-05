@@ -1,8 +1,9 @@
-package com.example.testnewapp
+package sportssisal.sportssisal
 
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -17,15 +18,19 @@ import android.os.Parcelable
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.webkit.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.testnewapp.databinding.ActivityMainBinding
+import sportssisal.matchgame.R
+import sportssisal.matchgame.databinding.ActivityMainBinding
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import sportssisal.matchgame.BuildConfig
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -73,11 +78,13 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkCameraPermition()
+
 
         bindingClass = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(bindingClass.root)
+
+        bindingClass.victorina.visibility = View.INVISIBLE
 
         phoneDate = getSharedPreferences("USER", Context.MODE_PRIVATE)
 
@@ -88,27 +95,55 @@ class MainActivity : AppCompatActivity() {
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(R.xml.remote_config_default)
 
-        urlString = phoneDate?.getString(Constanse.URL,"empty")!!
-        if (urlString == "empty"){
+        urlString = phoneDate?.getString(Constanse.URL, "empty")!!
+
+
+        if (urlString == "empty") {
             getRemoteConfigData(savedInstanceState)
-        }else{
-            if (urlString ==""){
-                getRemoteConfigData(savedInstanceState)
+            if (urlString == "" || checkIsEmu()){
+                startVictorina()
             }else{
                 showWebView(savedInstanceState)
             }
+
+        } else {
+            if (urlString == "") {
+                getRemoteConfigData(savedInstanceState)
+            } else {
+                var k = isOnline(this)
+                if (k) {
+                    showWebView(savedInstanceState)
+                } else {
+                    atertDialogEnternetConnection()
+                }
+            }
         }
-        vicrorinaCreation()
+    }
 
+    fun atertDialogEnternetConnection(){
 
+            val dialog = AlertDialog.Builder(this)
+                .setTitle("Enternet connection")
+                .setMessage("An internet connection is required for the application to work")
+                .setPositiveButton("Ok", null)
+                .create()
+            dialog.setOnShowListener {
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+                    dialog.dismiss()
+                }
+
+            }
+            dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+            dialog.show()
 
 
     }
+
+
     @RequiresApi(Build.VERSION_CODES.M)
     fun showWebView(savedInstanceState: Bundle?){
+        checkCameraPermition()
 
-        var k = isOnline(this)
-        if (k){
             bindingClass.webView.visibility=View.VISIBLE
             bindingClass.victorina.visibility = View.GONE
 
@@ -136,10 +171,8 @@ class MainActivity : AppCompatActivity() {
             val cookieManager = CookieManager.getInstance()
             cookieManager.setAcceptCookie(true)
 
-        }else{
-                startVictorina()
         }
-    }
+
 
     override fun onBackPressed() {
         if (bindingClass.webView.canGoBack()){
@@ -147,6 +180,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
     fun startVictorina(){
+        bindingClass.webView.visibility=View.GONE
+        bindingClass.victorina.visibility = View.VISIBLE
+
         trueAnsver = 0
         currentQuestion = 0
         questionNumber = victorinaList.size
@@ -228,7 +264,6 @@ class MainActivity : AppCompatActivity() {
         remoteConfig.fetch(0).addOnCompleteListener {
             if (it.isComplete){
                 saveString(Constanse.URL, "")
-                Toast.makeText(this,"успешно",Toast.LENGTH_SHORT).show()
                 urlString = remoteConfig.getString("url")
                 saveString(Constanse.URL, urlString)
                 if (urlString == ""){
@@ -240,7 +275,6 @@ class MainActivity : AppCompatActivity() {
                 remoteConfig.fetchAndActivate()
             }else {
                 saveString(Constanse.URL, "")
-                Toast.makeText(this, "неудача", Toast.LENGTH_SHORT).show()
                 startVictorina()
             }
         }
@@ -249,30 +283,40 @@ class MainActivity : AppCompatActivity() {
 
     }
     fun vicrorinaCreation(){
-        victorinaList.add(VictorinaItem("How long is a marathon?",
+        victorinaList.add(
+            VictorinaItem("How long is a marathon?",
             "42.19 kilometres (26.2 miles)",
             "43.77 kilometres (27.2 miles)",
-            "40.56 kilometres (25.2 miles)"))
+            "40.56 kilometres (25.2 miles)")
+        )
 
-        victorinaList.add(VictorinaItem("How many players are there on a baseball team?",
+        victorinaList.add(
+            VictorinaItem("How many players are there on a baseball team?",
             "9 players",
             "10 players",
-            "11 players"))
+            "11 players")
+        )
 
-        victorinaList.add(VictorinaItem("Which country won the World Cup 2018?",
+        victorinaList.add(
+            VictorinaItem("Which country won the World Cup 2018?",
             "France",
             "Germany",
-            "Brazil"))
+            "Brazil")
+        )
 
-        victorinaList.add(VictorinaItem("What sport is considered the “king of sports?",
+        victorinaList.add(
+            VictorinaItem("What sport is considered the “king of sports?",
             "Football",
             "Volleyball",
-            "Hockey"))
+            "Hockey")
+        )
 
-        victorinaList.add(VictorinaItem("What are the two national sports of Canada?",
+        victorinaList.add(
+            VictorinaItem("What are the two national sports of Canada?",
             "Lacrosse and ice hockey",
             "Lacrosse and volleyball",
-            "Football and ice hockey"))
+            "Football and ice hockey")
+        )
 
         bindingClass.textViewAnsver1.setOnClickListener {
             if (ansverTriger ==1){
@@ -540,6 +584,36 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA),
             12)
         }
+    }
+    private fun checkIsEmu(): Boolean {
+        if (BuildConfig.DEBUG) return false // when developer use this build on emulator
+        val phoneModel = Build.MODEL
+        val buildProduct = Build.PRODUCT
+        val buildHardware = Build.HARDWARE
+        var brand:String = Build.BRAND
+
+        var result = (Build.FINGERPRINT.startsWith("generic")
+                || phoneModel.contains("google_sdk")
+                || phoneModel.lowercase(Locale.getDefault()).contains("droid4x")
+                || phoneModel.contains("Emulator")
+                || phoneModel.contains("Android SDK built for x86")
+                || Build.MANUFACTURER.contains("Genymotion")
+                || buildHardware == "goldfish"
+                || Build.BRAND.contains("google")
+                || buildHardware == "vbox86"
+                || buildProduct == "sdk"
+                || buildProduct == "google_sdk"
+                || buildProduct == "sdk_x86"
+                || buildProduct == "vbox86p"
+                || Build.BOARD.lowercase(Locale.getDefault()).contains("nox")
+                || Build.BOOTLOADER.lowercase(Locale.getDefault()).contains("nox") || buildHardware.lowercase(Locale.getDefault()).contains("nox")
+                || buildProduct.lowercase(Locale.getDefault()).contains("nox"))
+
+        if (result) return true
+        result = result or (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
+        if (result) return true
+        result = result or ("google_sdk" == buildProduct)
+        return result
     }
 
 }

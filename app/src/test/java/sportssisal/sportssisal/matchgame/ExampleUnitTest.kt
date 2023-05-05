@@ -1,4 +1,4 @@
-package com.example.testnewapp
+package sportssisal.sportssisal.matchgame
 
 import org.junit.Test
 

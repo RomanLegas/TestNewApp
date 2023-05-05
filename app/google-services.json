@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "365625332674",
-    "project_id": "testnewapp-c88f8",
-    "storage_bucket": "testnewapp-c88f8.appspot.com"
+    "project_number": "935280601970",
+    "project_id": "wern-d30d7",
+    "storage_bucket": "wern-d30d7.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:365625332674:android:1b1e676088ceadd8223c5b",
+        "mobilesdk_app_id": "1:935280601970:android:ce0bbf2bca510cfd890beb",
         "android_client_info": {
-          "package_name": "com.example.testnewapp"
+          "package_name": "sportssisal.matchgame"
         }
       },
       "oauth_client": [
         {
-          "client_id": "365625332674-a3d750mh9bq592femej75krq4s9kv3bv.apps.googleusercontent.com",
+          "client_id": "935280601970-drt27qlcif263563kfp7ruertr31002f.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBU3aDYz5AO-a3yo_Y_-xRzbUsxGpsFbC4"
+          "current_key": "AIzaSyDxP1e_AZycgusSGkSG7nO7-fVO2w_cWB8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "365625332674-a3d750mh9bq592femej75krq4s9kv3bv.apps.googleusercontent.com",
+              "client_id": "935280601970-drt27qlcif263563kfp7ruertr31002f.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -1,4 +1,4 @@
-package com.example.testnewapp
+package sportssisal.sportssisal
 
 import android.content.Context
 import android.util.Log

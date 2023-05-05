@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/testbackground"
-    tools:context=".MainActivity">
+    tools:context="sportssisal.sportssisal.MainActivity">
 
     <WebView
         android:id="@+id/webView"

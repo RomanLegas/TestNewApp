@@ -1,4 +1,4 @@
-package com.example.testnewapp
+package sportssisal.sportssisal
 
 class VictorinaItem(
     val question:String,
